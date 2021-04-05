@@ -1,2 +1,2 @@
-# Weather-App
-SofaScore Academy Project - Weather App
+# Weather App
+SofaScore Academy Project
