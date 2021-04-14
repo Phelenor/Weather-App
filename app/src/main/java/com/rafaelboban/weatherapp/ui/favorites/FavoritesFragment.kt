@@ -1,4 +1,4 @@
-package com.rafaelboban.weatherapp.ui.dashboard
+package com.rafaelboban.weatherapp.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.rafaelboban.weatherapp.R
 
-class DashboardFragment : Fragment() {
+class FavoritesFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var favoritesViewModel: FavoritesViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        dashboardViewModel =
-                ViewModelProvider(this).get(DashboardViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        favoritesViewModel =
+                ViewModelProvider(this).get(FavoritesViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_favorites, container, false)
         val textView: TextView = root.findViewById(R.id.text_dashboard)
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
+        favoritesViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root
