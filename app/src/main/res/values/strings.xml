@@ -6,4 +6,5 @@
     <string name="text_recent">Recent</string>
     <string name="search_cities_hint">Search Cities</string>
     <string name="temperature_celsius_sign">%1$s%2$s</string>
+    <string name="distance_km">Distance: %1$s km</string>
 </resources>

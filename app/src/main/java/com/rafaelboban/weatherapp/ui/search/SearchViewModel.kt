@@ -6,37 +6,50 @@ import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import com.rafaelboban.weatherapp.data.repository.MainRepository
 import com.rafaelboban.weatherapp.utils.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.internal.notify
 import okhttp3.internal.wait
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SearchViewModel(val repository: MainRepository) : ViewModel() {
 
-    val locations = MutableLiveData<ArrayList<Location>>()
-    val weathers = MutableLiveData<ArrayList<LocationWeather>>()
+    var jobLoc: Job? = null
+    var jobWeather: Job? = null
+
+
+    val weatherMap = MutableLiveData<LinkedHashMap<Location, LocationWeather>>()
+    var locations = ArrayList<Location>()
 
     init {
-        locations.value = arrayListOf()
-        weathers.value = arrayListOf()
+        weatherMap.value = LinkedHashMap<Location, LocationWeather>()
     }
 
     fun getLocations(query: String) {
-        viewModelScope.launch {
-            locations.value = repository.getLocations(query)
+        jobLoc = viewModelScope.launch {
+            locations = repository.getLocations(query)
             getWeather()
         }
     }
 
-    private fun getWeather() {
-        viewModelScope.launch {
-            for (location in locations.value!!) {
-                weathers.value?.add(repository.getWeather(location.woeid))
-                weathers.notifyObserver()
+    fun getWeather() {
+        clear()
+        jobWeather = viewModelScope.launch {
+            for (location in locations) {
+                weatherMap.value?.set(location, repository.getWeather(location.woeid))
+                weatherMap.notifyObserver()
             }
         }
+    }
+
+    fun cancelOps() {
+        jobLoc?.cancel()
+        jobWeather?.cancel()
+    }
+
+    fun clear() {
+        weatherMap.value!!.clear()
+        weatherMap.notifyObserver()
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {

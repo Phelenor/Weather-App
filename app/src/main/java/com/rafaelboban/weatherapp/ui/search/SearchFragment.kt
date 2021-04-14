@@ -15,6 +15,7 @@ import com.rafaelboban.weatherapp.data.adapters.LocationsAdapter
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
 import com.rafaelboban.weatherapp.databinding.FragmentSearchBinding
+import okhttp3.internal.notify
 
 class SearchFragment : Fragment() {
     private lateinit var _binding: FragmentSearchBinding
@@ -34,7 +35,7 @@ class SearchFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        recyclerAdapter = LocationsAdapter(arrayListOf(), arrayListOf())
+        recyclerAdapter = LocationsAdapter(LinkedHashMap())
         recyclerView.adapter = recyclerAdapter
 
         setupViewModel()
@@ -52,36 +53,30 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupObservers() {
-
-        viewModel.weathers.observe(viewLifecycleOwner, {
+        viewModel.weatherMap.observe(viewLifecycleOwner, {
             recyclerAdapter.apply {
                 addWeathers(it)
                 notifyDataSetChanged()
             }
         })
-
-        viewModel.locations.observe(viewLifecycleOwner, {
-            recyclerAdapter.apply {
-                Log.d("KEKW", it.toString())
-                addLocations(it)
-                notifyDataSetChanged()
-            }
-        })
-
     }
 
     private fun setupListeners() {
         binding.toolbarSearch.searchField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+                if (s?.length!! > 2) {
+                    viewModel.cancelOps()
+                    viewModel.getLocations(s.toString())
+                } else if (s.length <= 1) {
+                    viewModel.cancelOps()
+                    viewModel.clear()
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.length!! > 1) {
-                    viewModel.getLocations(s.toString())
-                }
             }
         })
     }

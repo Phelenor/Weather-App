@@ -39,8 +39,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginBottom="24dp"
             card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/temperature_tv"
             card_view:layout_constraintStart_toStartOf="parent"
             tools:text="37°47′N, 122°25′W" />
 
