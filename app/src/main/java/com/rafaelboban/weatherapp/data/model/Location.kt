@@ -11,8 +11,10 @@ data class Location(
     var latt_long: String,
     var location_type: String,
     var title: String,
-    @PrimaryKey var woeid: Int
+    var woeid: Int
 ) : Serializable {
     var favorited = false
-    @Embedded var dateAdded: Date? = null
+    var visited = false
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 }

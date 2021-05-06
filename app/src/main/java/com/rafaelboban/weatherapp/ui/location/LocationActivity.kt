@@ -81,6 +81,8 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         viewModel.getHourly(location.woeid,
             "${date.year}/${date.monthValue}/${date.dayOfMonth}")
 
+        location.visited = true
+        viewModel.storeLocation(location)
 
         // Next Week RV
         recyclerViewWeek = binding.nextRv

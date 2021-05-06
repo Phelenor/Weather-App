@@ -15,13 +15,15 @@ class SearchViewModel(val repository: MainRepository) : ViewModel() {
 
     init {
         weatherMap.value = LinkedHashMap<Location, LocationWeather>()
+        getRecent()
     }
 
     fun getLocations(query: String) {
+        var favoritedDb: MutableList<Location>
         jobLoc = viewModelScope.launch {
-
+            // ova dva poziva s async
             val locationsResponse = repository.getLocations(query)
-            val locationsDb = repository.getAllDb()
+            favoritedDb = repository.getFavorited()
             val fetchWeather = locationsResponse.map {location ->
                 async {
                     repository.getWeather(location.woeid)
@@ -30,7 +32,35 @@ class SearchViewModel(val repository: MainRepository) : ViewModel() {
             val weathersResponse = fetchWeather.awaitAll()
             clearData()
             for (i in 0 until locationsResponse.size) {
-                if (locationsResponse[i] in locationsDb) locationsResponse[i].favorited = true
+                for (favorite in favoritedDb) {
+                    if (locationsResponse[i].woeid == favorite.woeid) {
+                        locationsResponse[i].favorited = true
+                        break
+                    }
+                }
+                weatherMap.value!![locationsResponse[i]] = weathersResponse[i]
+                weatherMap.notifyObserver()
+            }
+
+//            val dbResponse = repository.getCount()
+//            if (dbResponse - favoritedDb.size > 20) {
+//                repository.filterRecent()
+//            }
+        }
+    }
+
+    fun getRecent() {
+        jobLoc = viewModelScope.launch {
+            // ova dva poziva s async
+            val locationsResponse = repository.getRecentFive()
+            val fetchWeather = locationsResponse.map {location ->
+                async {
+                    repository.getWeather(location.woeid)
+                }
+            }
+            val weathersResponse = fetchWeather.awaitAll()
+            clearData()
+            for (i in 0 until locationsResponse.size) {
                 weatherMap.value!![locationsResponse[i]] = weathersResponse[i]
                 weatherMap.notifyObserver()
             }

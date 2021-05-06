@@ -1,5 +1,6 @@
 package com.rafaelboban.weatherapp.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,7 @@ class FavoritesViewModel(val repository: MainRepository) : ViewModel() {
 
     fun getLocations() {
         viewModelScope.launch {
-            val locationsResponse = repository.getAllDb()
+            val locationsResponse = repository.getFavorited()
             val fetchWeather = locationsResponse.map {location ->
                 async {
                     repository.getWeather(location.woeid)

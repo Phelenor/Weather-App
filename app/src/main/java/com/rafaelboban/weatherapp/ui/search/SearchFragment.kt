@@ -70,8 +70,10 @@ class SearchFragment : Fragment() {
                     viewModel.cancelOps()
                     viewModel.getLocations(s.toString())
                 } else if (s.length <= 1) {
+                    binding.textRecent.text = "Recent"
                     viewModel.cancelOps()
                     viewModel.clearData()
+                    viewModel.getRecent()
                 }
             }
 

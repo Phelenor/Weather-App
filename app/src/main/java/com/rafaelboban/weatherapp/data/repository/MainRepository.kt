@@ -15,7 +15,15 @@ class MainRepository(private val apiHelper: ApiHelper, private val dbHelper: DbH
 
     suspend fun getAllDb() = dbHelper.getAll()
 
+    suspend fun getCount(): Int = dbHelper.getCount()
+
+//    suspend fun filterRecent() = dbHelper.filterRecent()
+
     suspend fun insertAllDb(vararg locations: Location) = dbHelper.insertAll(*locations)
 
-    suspend fun deleteDb(location: Location) =dbHelper.delete(location)
+    suspend fun deleteDb(location: Location) = dbHelper.delete(location)
+
+    suspend fun getFavorited(): MutableList<Location> = dbHelper.getFavorited()
+
+    suspend fun getRecentFive(): MutableList<Location> = dbHelper.getRecentFive()
 }

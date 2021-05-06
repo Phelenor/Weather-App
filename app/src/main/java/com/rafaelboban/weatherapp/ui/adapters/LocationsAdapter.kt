@@ -2,6 +2,7 @@ package com.rafaelboban.weatherapp.ui.adapters
 
 import android.content.Intent
 import android.icu.util.TimeZone
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -54,7 +55,6 @@ class LocationsAdapter(
             R.string.temperature_celsius_sign,
             weather.the_temp.roundToInt().toString(), "°"
         )
-
         val icon = context.resources.getIdentifier("ic_" + weather.weather_state_abbr,
             "drawable", context.packageName)
         holder.binding.weatherIcon.setImageDrawable(ResourcesCompat.getDrawable(context.resources, icon, null))
@@ -66,6 +66,9 @@ class LocationsAdapter(
             intent.putExtra(EXTRA_WEATHER, weatherMap[location])
             context.startActivity(intent)
         }
+
+        holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
+            R.drawable.ic_baseline_star0, null))
 
         if (location.favorited) {
             holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
