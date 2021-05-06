@@ -33,7 +33,6 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
 
-
 const val EXTRA_LOCATION = "EXTRA_LOCATION"
 const val EXTRA_WEATHER = "EXTRA_WEATHER"
 
