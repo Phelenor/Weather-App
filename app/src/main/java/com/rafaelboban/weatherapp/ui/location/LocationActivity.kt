@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.icu.util.TimeZone
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +45,7 @@ private lateinit var recyclerAdapterWeek: WeatherAdapter
 
 lateinit var location: Location
 lateinit var weather: LocationWeather
+var TIME_HOURS: Int = 0
 
 class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -139,6 +141,7 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
             recyclerAdapterToday.apply {
                 addHourly(it)
                 notifyDataSetChanged()
+                recyclerViewToday.layoutManager!!.scrollToPosition(TIME_HOURS)
             }
         })
     }
@@ -154,12 +157,14 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         val dateString = weather.time.split("T")[0]
         val time = weather.time.split("T")[1].split(".")[0].split(":")
         var hours = time[0]
+        TIME_HOURS = hours.toInt()
         var marker = "AM"
         if (hours.toInt() - 12 > 0) {
             marker = "PM"
             hours = (hours.toInt() - 12).toString()
             if (hours.toInt() < 10) hours = "0$hours"
         }
+
         var timeString = "${hours}:${time[1]} $marker (${
             TimeZone.getTimeZone(weather.timezone)
                 .getDisplayName(false, TimeZone.SHORT)
