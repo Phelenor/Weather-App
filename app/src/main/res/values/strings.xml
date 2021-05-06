@@ -7,4 +7,21 @@
     <string name="search_cities_hint">Search Cities</string>
     <string name="temperature_celsius_sign">%1$s%2$s</string>
     <string name="distance_km">Distance: %1$s km</string>
+    <string name="pressure">PRESSURE</string>
+    <string name="min_max">MIN / MAX</string>
+    <string name="accuracy">ACCURACY</string>
+    <string name="visibility">VISIBILITY</string>
+    <string name="wind">WIND</string>
+    <string name="humidity">HUMIDITY</string>
+    <string name="today">Today</string>
+    <string name="next_5_days">Next 5 Days</string>
+    <string name="grid_minmax">%1$s° / %2$s°</string>
+    <string name="date">%1$s, %2$s %3$s</string>
+    <string name="grid_wind">%1$s km/h (%2$s)</string>
+    <string name="grid_humidity">%1$s\%%</string>
+    <string name="grid_accuracy">%1$s\%%</string>
+    <string name="grid_pressure">%1$s hPa</string>
+    <string name="grid_visibility">%1$s km</string>
+    <string name="time">%1$s:00</string>
+    <string name="view_more">VIEW MORE</string>
 </resources>

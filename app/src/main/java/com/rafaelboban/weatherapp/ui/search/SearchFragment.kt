@@ -3,7 +3,6 @@ package com.rafaelboban.weatherapp.ui.search
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rafaelboban.weatherapp.data.adapters.LocationsAdapter
+import com.rafaelboban.weatherapp.ui.adapters.LocationsAdapter
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
+import com.rafaelboban.weatherapp.data.database.DatabaseBuilder
+import com.rafaelboban.weatherapp.data.database.DbHelper
 import com.rafaelboban.weatherapp.databinding.FragmentSearchBinding
-import okhttp3.internal.notify
+import com.rafaelboban.weatherapp.ui.viewmodels.SearchViewModel
+import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
 
 class SearchFragment : Fragment() {
-    private lateinit var _binding: FragmentSearchBinding
-    private val binding get() = _binding
+    private lateinit var binding: FragmentSearchBinding
     private lateinit var viewModel: SearchViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: LocationsAdapter
@@ -29,7 +30,7 @@ class SearchFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         recyclerView = binding.searchRecycler
         recyclerView.setHasFixedSize(true)
@@ -48,7 +49,7 @@ class SearchFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService), DbHelper(DatabaseBuilder.getInstance(requireContext())))
         ).get(SearchViewModel::class.java)
     }
 
@@ -64,12 +65,13 @@ class SearchFragment : Fragment() {
     private fun setupListeners() {
         binding.toolbarSearch.searchField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (s?.length!! > 2) {
+                if (s?.length!! >= 2) {
+                    binding.textRecent.text = "Results"
                     viewModel.cancelOps()
                     viewModel.getLocations(s.toString())
                 } else if (s.length <= 1) {
                     viewModel.cancelOps()
-                    viewModel.clear()
+                    viewModel.clearData()
                 }
             }
 

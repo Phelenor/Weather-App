@@ -1,5 +1,6 @@
 package com.rafaelboban.weatherapp.data.api
 
+import com.rafaelboban.weatherapp.data.model.ConsolidatedWeather
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import retrofit2.http.GET
@@ -16,5 +17,5 @@ interface ApiService {
 
     @GET("/api/location/{woeid}/{date}")
     suspend fun getWeatherDay(@Path("woeid") woeid: Int,
-                              @Path("date") date: String): LocationWeather
+                              @Path("date") date: String): MutableList<ConsolidatedWeather>
 }

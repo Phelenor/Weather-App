@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/text_recent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +25,7 @@
         android:text="@string/text_recent"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_search" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_recycler"
@@ -36,5 +35,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_search" />
+        app:layout_constraintTop_toBottomOf="@+id/text_recent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

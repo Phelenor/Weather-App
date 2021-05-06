@@ -1,5 +1,9 @@
 package com.rafaelboban.weatherapp.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.io.Serializable
+
 data class ConsolidatedWeather(
     val air_pressure: Double,
     val applicable_date: String,
@@ -16,4 +20,4 @@ data class ConsolidatedWeather(
     val wind_direction: Double,
     val wind_direction_compass: String,
     val wind_speed: Double
-)
+) : Serializable
