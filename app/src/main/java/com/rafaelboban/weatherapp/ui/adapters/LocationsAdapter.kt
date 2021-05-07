@@ -2,7 +2,6 @@ package com.rafaelboban.weatherapp.ui.adapters
 
 import android.content.Intent
 import android.icu.util.TimeZone
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -17,7 +16,6 @@ import com.rafaelboban.weatherapp.ui.location.EXTRA_LOCATION
 import com.rafaelboban.weatherapp.ui.location.EXTRA_WEATHER
 import com.rafaelboban.weatherapp.ui.location.LocationActivity
 import kotlinx.coroutines.runBlocking
-import kotlin.collections.LinkedHashMap
 import kotlin.math.roundToInt
 
 
@@ -70,7 +68,7 @@ class LocationsAdapter(
         holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
             R.drawable.ic_baseline_star0, null))
 
-        if (location.favorited) {
+        if (location.favorite == true) {
             holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
                 R.drawable.ic_baseline_star1, null))
         }
@@ -95,10 +93,10 @@ class LocationsAdapter(
         }
 
         holder.binding.favoriteButton.setOnClickListener {
-            if (location.favorited) {
-                location.favorited = false
+            if (location.favorite == true) {
+                location.favorite = false
                 runBlocking {
-                    db.delete(location)
+                    db.deleteLocation(location.woeid.toString())
                 }
 
                 if (favoritesFragment) {
@@ -109,9 +107,9 @@ class LocationsAdapter(
                 holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
                     R.drawable.ic_baseline_star0, null))
             } else {
-                location.favorited = true
+                location.favorite = true
                 runBlocking {
-                    db.insertAll(location)
+                    db.insertLocation(mutableListOf(location))
                 }
                 holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
                     R.drawable.ic_baseline_star1, null))

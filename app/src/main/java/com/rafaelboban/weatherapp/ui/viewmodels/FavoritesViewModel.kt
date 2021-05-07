@@ -1,6 +1,5 @@
 package com.rafaelboban.weatherapp.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,7 @@ import com.rafaelboban.weatherapp.data.repository.MainRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import java.util.LinkedHashMap
+import java.util.*
 
 class FavoritesViewModel(val repository: MainRepository) : ViewModel() {
 
@@ -22,7 +21,7 @@ class FavoritesViewModel(val repository: MainRepository) : ViewModel() {
 
     fun getLocations() {
         viewModelScope.launch {
-            val locationsResponse = repository.getFavorited()
+            val locationsResponse = repository.getFavoritesDb()
             val fetchWeather = locationsResponse.map {location ->
                 async {
                     repository.getWeather(location.woeid)
@@ -31,6 +30,7 @@ class FavoritesViewModel(val repository: MainRepository) : ViewModel() {
             val weathersResponse = fetchWeather.awaitAll()
 
             for (i in 0 until locationsResponse.size) {
+                locationsResponse[i].favorite = true
                 weatherMap.value!![locationsResponse[i]] = weathersResponse[i]
                 weatherMap.notifyObserver()
             }

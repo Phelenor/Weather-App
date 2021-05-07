@@ -2,8 +2,8 @@ package com.rafaelboban.weatherapp.data.repository
 
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.database.DbHelper
+import com.rafaelboban.weatherapp.data.model.Favorite
 import com.rafaelboban.weatherapp.data.model.Location
-import com.rafaelboban.weatherapp.data.model.LocationWeather
 
 class MainRepository(private val apiHelper: ApiHelper, private val dbHelper: DbHelper) {
 
@@ -13,17 +13,22 @@ class MainRepository(private val apiHelper: ApiHelper, private val dbHelper: DbH
 
     suspend fun getWeatherDay(woeid: Int, date: String) = apiHelper.getWeatherDay(woeid, date)
 
-    suspend fun getAllDb() = dbHelper.getAll()
+    suspend fun getLocationsDb() = dbHelper.getLocations()
 
-    suspend fun getCount(): Int = dbHelper.getCount()
+    suspend fun getFavoritesDb() = dbHelper.getFavorites()
 
-//    suspend fun filterRecent() = dbHelper.filterRecent()
+    suspend fun getRecentDb(): MutableList<Location> = dbHelper.getRecent()
 
-    suspend fun insertAllDb(vararg locations: Location) = dbHelper.insertAll(*locations)
+    suspend fun insertLocation(vararg locations: Location) = dbHelper.insertLocation(arrayListOf(*locations))
 
-    suspend fun deleteDb(location: Location) = dbHelper.delete(location)
+    suspend fun insertFavorite(vararg favs: Favorite) = dbHelper.insertFavorite(arrayListOf(*favs))
 
-    suspend fun getFavorited(): MutableList<Location> = dbHelper.getFavorited()
+    suspend fun deleteLocationDB(woeid: String) = dbHelper.deleteLocation(woeid)
 
-    suspend fun getRecentFive(): MutableList<Location> = dbHelper.getRecentFive()
+    suspend fun deleteFavoriteDb(woeid: String) = dbHelper.deleteFavorite(woeid)
+
+    suspend fun deleteFavorites() = dbHelper.deleteFavorites()
+
+    fun resetKey() = dbHelper.resetKey()
+
 }

@@ -1,29 +1,39 @@
 package com.rafaelboban.weatherapp.data.database
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.rafaelboban.weatherapp.data.model.Favorite
 import com.rafaelboban.weatherapp.data.model.Location
-import com.rafaelboban.weatherapp.data.model.LocationWeather
 
 @Dao
 interface LocationDao {
-    @Query("SELECT * FROM Location")
-    suspend fun getAll(): MutableList<Location>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLocation(locations: MutableList<Location>)
 
-    @Query("SELECT * FROM Location WHERE favorited = 1")
-    suspend fun getFavorited(): MutableList<Location>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFavorite(favorite: MutableList<Favorite>)
+
+    @Query("SELECT * FROM Location")
+    suspend fun getLocations(): MutableList<Location>
+
+    @Query("SELECT Favorite.woeid, Favorite.id, latt_long, location_type, title, isRecent, favorite FROM Favorite JOIN Location ON Favorite.woeid=Location.woeid")
+    suspend fun getFavorites(): MutableList<Location>
+
+    @Query("SELECT * FROM Location WHERE isRecent = 1")
+    suspend fun getRecent(): MutableList<Location>
 
     @Query("SELECT COUNT(*) FROM Location")
     suspend fun getCount(): Int
 
-    @Query("SELECT * FROM Location WHERE visited = 1 ORDER BY id DESC LIMIT 5")
-    suspend fun getRecentFive(): MutableList<Location>
+    @Query("DELETE FROM Location WHERE woeid = :woeid")
+    suspend fun deleteLocation(woeid: String)
 
-//    @Query("DELETE FROM Location WHERE favorited = 0 LIMIT 10")
-//    suspend fun filterRecent()
+    @Query("DELETE FROM Favorite WHERE woeid = :woeid")
+    suspend fun deleteFavorite(woeid: String)
 
-    @Insert
-    suspend fun insertAll(locations: MutableList<Location>)
+    @Query("DELETE FROM Favorite")
+    suspend fun deleteFavorites()
 
-    @Delete
-    suspend fun delete(location: Location)
 }

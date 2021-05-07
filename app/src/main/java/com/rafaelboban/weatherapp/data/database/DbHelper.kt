@@ -1,20 +1,27 @@
 package com.rafaelboban.weatherapp.data.database
 
+import com.rafaelboban.weatherapp.data.model.Favorite
 import com.rafaelboban.weatherapp.data.model.Location
 
 class DbHelper(private val db: LocationDatabase) {
 
-    suspend fun getAll() = db.locationDao().getAll()
+    suspend fun getLocations() = db.locationDao().getLocations()
 
-    suspend fun getFavorited(): MutableList<Location> = db.locationDao().getFavorited()
+    suspend fun getFavorites(): MutableList<Location> = db.locationDao().getFavorites()
 
-    suspend fun getRecentFive(): MutableList<Location> = db.locationDao().getRecentFive()
+    suspend fun getRecent(): MutableList<Location> = db.locationDao().getRecent()
 
-    suspend fun getCount(): Int = db.locationDao().getCount()
+    suspend fun insertFavorite(favs: MutableList<Favorite>) = db.locationDao().insertFavorite(favs)
 
-//    suspend fun filterRecent() = db.locationDao().filterRecent()
+    suspend fun insertLocation(locations: MutableList<Location>) = db.locationDao().insertLocation(locations)
 
-    suspend fun insertAll(vararg locations: Location) = db.locationDao().insertAll(arrayListOf(*locations))
+    suspend fun deleteLocation(woeid: String) = db.locationDao().deleteLocation(woeid)
 
-    suspend fun delete(location: Location) = db.locationDao().delete(location)
+    suspend fun deleteFavorite(woeid: String) = db.locationDao().deleteFavorite(woeid)
+
+    suspend fun deleteFavorites() = db.locationDao().deleteFavorites()
+
+    fun resetKey() {
+        db.openHelper.writableDatabase.execSQL("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Favorite'")
+    }
 }

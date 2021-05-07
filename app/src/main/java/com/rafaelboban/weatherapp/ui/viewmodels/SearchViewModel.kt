@@ -1,11 +1,17 @@
 package com.rafaelboban.weatherapp.ui.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import com.rafaelboban.weatherapp.data.repository.MainRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.set
 
 class SearchViewModel(val repository: MainRepository) : ViewModel() {
 
@@ -15,15 +21,27 @@ class SearchViewModel(val repository: MainRepository) : ViewModel() {
 
     init {
         weatherMap.value = LinkedHashMap<Location, LocationWeather>()
-        getRecent()
+        getLocations(recent = true)
     }
 
-    fun getLocations(query: String) {
-        var favoritedDb: MutableList<Location>
+    fun getLocations(query: String = "", recent: Boolean = false) {
+        var favoritesDb: MutableList<Location>
+        var locationsResponse: MutableList<Location>
         jobLoc = viewModelScope.launch {
-            // ova dva poziva s async
-            val locationsResponse = repository.getLocations(query)
-            favoritedDb = repository.getFavorited()
+
+            if (recent) {
+                locationsResponse = repository.getRecentDb()
+//                locationsResponse = locationsResponse
+//                                        .subList(locationsResponse.lastIndex - 5, locationsResponse.lastIndex)
+//                                        .toMutableList()
+                locationsResponse.reverse()
+            } else {
+                locationsResponse = repository.getLocations(query)
+            }
+            locationsResponse.forEach {
+                repository.insertLocation(it)
+            }
+            favoritesDb = repository.getFavoritesDb()
             val fetchWeather = locationsResponse.map {location ->
                 async {
                     repository.getWeather(location.woeid)
@@ -32,35 +50,12 @@ class SearchViewModel(val repository: MainRepository) : ViewModel() {
             val weathersResponse = fetchWeather.awaitAll()
             clearData()
             for (i in 0 until locationsResponse.size) {
-                for (favorite in favoritedDb) {
+                for (favorite in favoritesDb) {
                     if (locationsResponse[i].woeid == favorite.woeid) {
-                        locationsResponse[i].favorited = true
+                        locationsResponse[i].favorite = true
                         break
                     }
                 }
-                weatherMap.value!![locationsResponse[i]] = weathersResponse[i]
-                weatherMap.notifyObserver()
-            }
-
-//            val dbResponse = repository.getCount()
-//            if (dbResponse - favoritedDb.size > 20) {
-//                repository.filterRecent()
-//            }
-        }
-    }
-
-    fun getRecent() {
-        jobLoc = viewModelScope.launch {
-            // ova dva poziva s async
-            val locationsResponse = repository.getRecentFive()
-            val fetchWeather = locationsResponse.map {location ->
-                async {
-                    repository.getWeather(location.woeid)
-                }
-            }
-            val weathersResponse = fetchWeather.awaitAll()
-            clearData()
-            for (i in 0 until locationsResponse.size) {
                 weatherMap.value!![locationsResponse[i]] = weathersResponse[i]
                 weatherMap.notifyObserver()
             }

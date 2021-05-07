@@ -10,12 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rafaelboban.weatherapp.ui.adapters.LocationsAdapter
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
 import com.rafaelboban.weatherapp.data.database.DatabaseBuilder
 import com.rafaelboban.weatherapp.data.database.DbHelper
 import com.rafaelboban.weatherapp.databinding.FragmentSearchBinding
+import com.rafaelboban.weatherapp.ui.adapters.LocationsAdapter
 import com.rafaelboban.weatherapp.ui.viewmodels.SearchViewModel
 import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
 
@@ -73,7 +73,7 @@ class SearchFragment : Fragment() {
                     binding.textRecent.text = "Recent"
                     viewModel.cancelOps()
                     viewModel.clearData()
-                    viewModel.getRecent()
+                    viewModel.getLocations(recent = true)
                 }
             }
 

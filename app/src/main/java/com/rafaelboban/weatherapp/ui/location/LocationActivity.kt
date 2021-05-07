@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.icu.util.TimeZone
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
@@ -16,8 +15,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.rafaelboban.weatherapp.R
-import com.rafaelboban.weatherapp.ui.adapters.WeatherAdapter
-import com.rafaelboban.weatherapp.ui.adapters.db
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
 import com.rafaelboban.weatherapp.data.database.DatabaseBuilder
@@ -26,9 +23,9 @@ import com.rafaelboban.weatherapp.data.model.ConsolidatedWeather
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import com.rafaelboban.weatherapp.databinding.ActivityLocationBinding
+import com.rafaelboban.weatherapp.ui.adapters.WeatherAdapter
 import com.rafaelboban.weatherapp.ui.viewmodels.LocationViewModel
 import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
@@ -63,7 +60,7 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.mapView.getMapAsync(this)
         binding.mapView.onCreate(savedInstanceState)
 
-        if (location.favorited) {
+        if (location.favorite == true) {
             binding.favoriteButton.setImageDrawable(
                 ResourcesCompat.getDrawable(
                     resources,
@@ -81,8 +78,9 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         viewModel.getHourly(location.woeid,
             "${date.year}/${date.monthValue}/${date.dayOfMonth}")
 
-        location.visited = true
-        viewModel.storeLocation(location)
+        location.isRecent = true
+        // update db location var isRecent
+        viewModel.updateRecent(location)
 
         // Next Week RV
         recyclerViewWeek = binding.nextRv
@@ -119,18 +117,14 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setupListeners() {
         binding.favoriteButton.setOnClickListener {
-            if (location.favorited) {
-                location.favorited = false
-                runBlocking {
-                    db.delete(location)
-                }
+            if (location.favorite == true) {
+                location.favorite = false
+                viewModel.deleteFavorite(location)
                 binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(resources,
                     R.drawable.ic_baseline_star0, null))
             } else {
-                location.favorited = true
-                runBlocking {
-                    db.insertAll(location)
-                }
+                location.favorite = true
+                viewModel.insertFavorite(location)
                 binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(resources,
                     R.drawable.ic_baseline_star1, null))
             }

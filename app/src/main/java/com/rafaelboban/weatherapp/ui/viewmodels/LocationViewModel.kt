@@ -4,12 +4,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafaelboban.weatherapp.data.model.ConsolidatedWeather
+import com.rafaelboban.weatherapp.data.model.Favorite
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.repository.MainRepository
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class LocationViewModel(val repository: MainRepository) : ViewModel() {
+class LocationViewModel(private val repository: MainRepository) : ViewModel() {
 
     val weather = MutableLiveData<MutableList<ConsolidatedWeather>>()
 
@@ -23,16 +23,36 @@ class LocationViewModel(val repository: MainRepository) : ViewModel() {
         }
     }
 
-    fun storeLocation(location: Location) {
+    fun updateRecent(location: Location) {
         viewModelScope.launch {
-            val storedResponse = repository.getAllDb()
-            for (storedLocation in storedResponse) {
-                if (storedLocation.woeid == location.woeid) {
-                    repository.deleteDb(storedLocation)
-                    break
-                }
+            repository.deleteLocationDB(location.woeid.toString())
+            repository.insertLocation(location)
+        }
+    }
+
+    fun deleteFavorite(location: Location) {
+        viewModelScope.launch {
+            repository.deleteFavoriteDb(location.woeid.toString())
+            favoritesEqualize()
+        }
+    }
+
+    fun insertFavorite(location: Location) {
+        viewModelScope.launch {
+            repository.insertFavorite(Favorite(null, location.woeid))
+        }
+    }
+
+    fun favoritesEqualize() {
+        viewModelScope.launch {
+            val favoritesResponse = repository.getFavoritesDb()
+            repository.deleteFavorites()
+            repository.resetKey()
+            val favs = favoritesResponse.map {
+                Favorite(null, it.woeid)
             }
-            repository.insertAllDb(location)
+            for (fav in favs)
+                repository.insertFavorite(fav)
         }
     }
 }
