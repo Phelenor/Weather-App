@@ -35,5 +35,4 @@ interface LocationDao {
 
     @Query("DELETE FROM Favorite")
     suspend fun deleteFavorites()
-
 }

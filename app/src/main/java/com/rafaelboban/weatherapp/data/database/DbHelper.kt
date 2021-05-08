@@ -21,7 +21,7 @@ class DbHelper(private val db: LocationDatabase) {
 
     suspend fun deleteFavorites() = db.locationDao().deleteFavorites()
 
-    fun resetKey() {
+    suspend fun resetKey() {
         db.openHelper.writableDatabase.execSQL("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Favorite'")
     }
 }

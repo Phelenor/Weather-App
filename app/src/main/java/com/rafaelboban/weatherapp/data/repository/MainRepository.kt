@@ -29,6 +29,6 @@ class MainRepository(private val apiHelper: ApiHelper, private val dbHelper: DbH
 
     suspend fun deleteFavorites() = dbHelper.deleteFavorites()
 
-    fun resetKey() = dbHelper.resetKey()
+    suspend fun resetKey() = dbHelper.resetKey()
 
 }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rafaelboban.weatherapp.R
 import com.rafaelboban.weatherapp.data.database.DatabaseBuilder
 import com.rafaelboban.weatherapp.data.database.DbHelper
+import com.rafaelboban.weatherapp.data.model.Favorite
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import com.rafaelboban.weatherapp.databinding.CityItemCardBinding
@@ -43,7 +44,7 @@ class LocationsAdapter(
     }
 
     override fun onBindViewHolder(holder: LocationsViewHolder, position: Int) {
-        val location = weatherMap.keys.toMutableList()[position]
+        val location = weatherMap.keys.toMutableList()[holder.adapterPosition]
         val weather = weatherMap[location]!!.consolidated_weather[0]
         val context = holder.binding.root.context
 
@@ -96,12 +97,12 @@ class LocationsAdapter(
             if (location.favorite == true) {
                 location.favorite = false
                 runBlocking {
-                    db.deleteLocation(location.woeid.toString())
+                    db.deleteFavorite(location.woeid.toString())
+                    db.insertLocation(mutableListOf(location))
                 }
-
                 if (favoritesFragment) {
-                    weatherMap.remove(weatherMap.keys.toMutableList()[position])
-                    notifyItemRemoved(position)
+                    weatherMap.remove(weatherMap.keys.toMutableList()[holder.adapterPosition])
+                    notifyItemRemoved(holder.adapterPosition)
                 }
 
                 holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
@@ -109,7 +110,7 @@ class LocationsAdapter(
             } else {
                 location.favorite = true
                 runBlocking {
-                    db.insertLocation(mutableListOf(location))
+                    db.insertFavorite(mutableListOf(Favorite(null, location.woeid)))
                 }
                 holder.binding.favoriteButton.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
                     R.drawable.ic_baseline_star1, null))
