@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rafaelboban.weatherapp.R
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
 import com.rafaelboban.weatherapp.data.database.DatabaseBuilder
@@ -21,10 +21,14 @@ import com.rafaelboban.weatherapp.ui.viewmodels.SearchViewModel
 import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
 
 class SearchFragment : Fragment() {
+
     private lateinit var binding: FragmentSearchBinding
     private lateinit var viewModel: SearchViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerAdapter: LocationsAdapter
+    private lateinit var recyclerAdapterSearch: LocationsAdapter
+
+    var recent_flag = true
+    var last_query = ""
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -38,14 +42,26 @@ class SearchFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        recyclerAdapter = LocationsAdapter(LinkedHashMap())
-        recyclerView.adapter = recyclerAdapter
+        recyclerAdapterSearch = LocationsAdapter(LinkedHashMap())
+        recyclerView.adapter = recyclerAdapterSearch
 
         setupViewModel()
         setupObservers()
         setupListeners()
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (recent_flag) {
+            binding.toolbarSearch.searchField.setText(":")
+            binding.toolbarSearch.searchField.setText("")
+        } else {
+            binding.toolbarSearch.searchField.setText("")
+            binding.toolbarSearch.searchField.setText(last_query)
+            // binding.toolbarSearch.searchField.setSelection(last_query.length)
+        }
     }
 
     private fun setupViewModel() {
@@ -57,7 +73,7 @@ class SearchFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.weatherMap.observe(viewLifecycleOwner, {
-            recyclerAdapter.apply {
+            recyclerAdapterSearch.apply {
                 addWeathers(it)
                 notifyDataSetChanged()
             }
@@ -67,14 +83,23 @@ class SearchFragment : Fragment() {
     private fun setupListeners() {
         binding.toolbarSearch.searchField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (s?.length!! >= 2) {
-                    binding.textRecent.text = "Results"
+                if (s?.length!! > 0) {
+                    binding.toolbarSearch.iconClose.visibility = View.VISIBLE
+                } else {
+                    binding.toolbarSearch.iconClose.visibility = View.GONE
+                }
+
+                if (s.length >= 2) {
+                    binding.textRecent.text = getString(R.string.results_tv)
                     viewModel.cancelOps()
+                    recent_flag = false
+                    last_query = s.toString()
                     viewModel.getLocations(s.toString())
                 } else if (s.length <= 1) {
-                    binding.textRecent.text = "Recent"
+                    binding.textRecent.text = getString(R.string.recent_tv)
                     viewModel.cancelOps()
                     viewModel.clearData()
+                    recent_flag = true
                     viewModel.getLocations(recent = true)
                 }
             }
@@ -85,5 +110,9 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
+
+        binding.toolbarSearch.iconClose.setOnClickListener {
+            binding.toolbarSearch.searchField.setText("")
+        }
     }
 }

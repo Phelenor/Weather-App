@@ -1,8 +1,10 @@
 package com.rafaelboban.weatherapp.ui.adapters
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.icu.util.TimeZone
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -13,19 +15,25 @@ import com.rafaelboban.weatherapp.data.model.Favorite
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import com.rafaelboban.weatherapp.databinding.CityItemCardBinding
+import com.rafaelboban.weatherapp.ui.favorites.FavoritesFragment
 import com.rafaelboban.weatherapp.ui.location.EXTRA_LOCATION
 import com.rafaelboban.weatherapp.ui.location.EXTRA_WEATHER
 import com.rafaelboban.weatherapp.ui.location.LocationActivity
 import kotlinx.coroutines.runBlocking
+import java.util.*
+import kotlin.collections.LinkedHashMap
 import kotlin.math.roundToInt
 
 
 lateinit var db: DbHelper
 
+
 class LocationsAdapter(
-    private val weatherMap: LinkedHashMap<Location, LocationWeather>,
-    private var favoritesFragment: Boolean = false
+    var weatherMap: LinkedHashMap<Location, LocationWeather>,
+    private var inFavoritesFragment: Boolean = false,
+    val favoritesFragmentReference: FavoritesFragment? = null
 ) : RecyclerView.Adapter<LocationsAdapter.LocationsViewHolder>() {
+    var FAVORITES_EDIT_MODE = false
 
     inner class LocationsViewHolder(val binding: CityItemCardBinding) : RecyclerView.ViewHolder(
         binding.root
@@ -43,6 +51,7 @@ class LocationsAdapter(
         return LocationsViewHolder(binding)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: LocationsViewHolder, position: Int) {
         val location = weatherMap.keys.toMutableList()[holder.adapterPosition]
         val weather = weatherMap[location]!!.consolidated_weather[0]
@@ -58,7 +67,7 @@ class LocationsAdapter(
             "drawable", context.packageName)
         holder.binding.weatherIcon.setImageDrawable(ResourcesCompat.getDrawable(context.resources, icon, null))
 
-        holder.binding.root.setOnClickListener {
+        holder.binding.cityCard.setOnClickListener {
             val intent = Intent(context, LocationActivity::class.java).apply {
                 putExtra(EXTRA_LOCATION, location)
             }
@@ -74,7 +83,7 @@ class LocationsAdapter(
                 R.drawable.ic_baseline_star1, null))
         }
 
-        if (favoritesFragment) {
+        if (inFavoritesFragment) {
             val time = weatherMap[location]!!.time.split("T")[1].split(".")[0].split(":")
             var hours = time[0]
             var marker = "AM"
@@ -100,7 +109,7 @@ class LocationsAdapter(
                     db.deleteFavorite(location.woeid.toString())
                     db.insertLocation(mutableListOf(location))
                 }
-                if (favoritesFragment) {
+                if (inFavoritesFragment) {
                     weatherMap.remove(weatherMap.keys.toMutableList()[holder.adapterPosition])
                     notifyItemRemoved(holder.adapterPosition)
                 }
@@ -116,6 +125,17 @@ class LocationsAdapter(
                     R.drawable.ic_baseline_star1, null))
             }
         }
+
+        holder.binding.reorderIcon.setOnTouchListener { v, event ->
+            favoritesFragmentReference?.startDragging(holder)
+            true
+        }
+
+        if (FAVORITES_EDIT_MODE) {
+            holder.binding.reorderIcon.visibility = View.VISIBLE
+        } else {
+            holder.binding.reorderIcon.visibility = View.GONE
+        }
     }
 
     override fun getItemCount(): Int {
@@ -125,5 +145,13 @@ class LocationsAdapter(
     fun addWeathers(weathers: LinkedHashMap<Location, LocationWeather>) {
         this.weatherMap.clear()
         this.weatherMap.putAll(weathers)
+    }
+
+    fun moveItem(from: Int, to: Int) {
+        val keys = weatherMap.keys.toMutableList()
+        Collections.swap(keys, from, to)
+        weatherMap = keys.associateWith {
+            weatherMap[it]
+        } as LinkedHashMap<Location, LocationWeather>
     }
 }

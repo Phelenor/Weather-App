@@ -51,7 +51,12 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         setSupportActionBar(binding.toolbar)
+
+        binding.backButton.setOnClickListener {
+            this.onBackPressed()
+        }
 
         location = intent.getSerializableExtra(EXTRA_LOCATION) as Location
         weather = intent.getSerializableExtra(EXTRA_WEATHER) as LocationWeather

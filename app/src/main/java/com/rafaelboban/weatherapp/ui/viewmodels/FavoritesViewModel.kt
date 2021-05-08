@@ -24,16 +24,9 @@ class FavoritesViewModel(val repository: MainRepository) : ViewModel() {
     }
 
     fun getLocations() {
+        clearData()
         viewModelScope.launch {
             val favorites = repository.getFavoritesDb()
-            repository.deleteFavorites()
-            repository.resetKey()
-            val favs = favorites.map {
-                Favorite(null, it.woeid)
-            }
-            for (fav in favs)
-                repository.insertFavorite(fav)
-
 
             val fetchWeather = favorites.map {location ->
                 async {
@@ -47,10 +40,31 @@ class FavoritesViewModel(val repository: MainRepository) : ViewModel() {
                 weatherMap.value!![favorites[i]] = weathersResponse[i]
                 weatherMap.notifyObserver()
             }
+            repository.deleteFavorites()
+            repository.resetKey()
+            val favs = favorites.map {
+                Favorite(null, it.woeid)
+            }
+            for (fav in favs)
+                repository.insertFavorite(fav)
         }
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {
         this.value = this.value
+    }
+
+    fun clearData() {
+        weatherMap.value!!.clear()
+        weatherMap.notifyObserver()
+    }
+
+    fun updateFavorites(favorites: MutableList<Location>) {
+        viewModelScope.launch {
+            repository.deleteFavorites()
+            repository.resetKey()
+            for (fav in favorites)
+                repository.insertFavorite(Favorite(null, fav.woeid))
+        }
     }
 }

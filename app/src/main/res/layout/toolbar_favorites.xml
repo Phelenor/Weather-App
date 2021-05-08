@@ -18,7 +18,7 @@
             android:layout_width="176dp"
             android:layout_height="24dp"
             android:layout_marginStart="24dp"
-            android:text="My Cities"
+            android:text="@string/my_cities"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent">
@@ -26,23 +26,41 @@
         </TextView>
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/edit_button"
+            android:visibility="visible"
+            android:focusable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
+            android:clickable="true"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
             card_view:srcCompat="@drawable/ic_edit" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/edit_done_button"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
-            card_view:layout_constraintBottom_toBottomOf="@+id/imageView2"
-            card_view:layout_constraintEnd_toStartOf="@+id/imageView2"
-            card_view:layout_constraintTop_toTopOf="@+id/imageView2"
+            android:clickable="true"
+            android:focusable="true"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:srcCompat="@drawable/ic_done"
+            card_view:tint="@color/white" />
+
+        <ImageView
+            android:visibility="visible"
+            android:id="@+id/calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            card_view:layout_constraintBottom_toBottomOf="@+id/edit_button"
+            card_view:layout_constraintEnd_toStartOf="@+id/edit_button"
+            card_view:layout_constraintTop_toTopOf="@+id/edit_button"
             card_view:srcCompat="@drawable/ic_cal" />
 
 
