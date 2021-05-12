@@ -1,6 +1,8 @@
 package com.rafaelboban.weatherapp
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -20,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         val navView: BottomNavigationView = binding.navView
 
+        setupPreferences()
+
         val navController = findNavController(R.id.nav_host_fragment)
 
 
@@ -29,5 +33,18 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         supportActionBar?.hide()
+    }
+
+    private fun setupPreferences() {
+        val sp = PreferenceManager.getDefaultSharedPreferences(this)
+        if (!sp.contains("initialized")) {
+            val ed = sp.edit();
+
+            ed.putBoolean("initialized", true);
+
+            ed.putString("unit", "metric");
+
+            ed.apply();
+        }
     }
 }

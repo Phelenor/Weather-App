@@ -1,5 +1,7 @@
 package com.rafaelboban.weatherapp.ui.favorites
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +12,18 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import com.rafaelboban.weatherapp.R
 import com.rafaelboban.weatherapp.ui.adapters.LocationsAdapter
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
 import com.rafaelboban.weatherapp.data.database.DatabaseBuilder
 import com.rafaelboban.weatherapp.data.database.DbHelper
 import com.rafaelboban.weatherapp.databinding.FragmentFavoritesBinding
+import com.rafaelboban.weatherapp.databinding.SnackbarBinding
 import com.rafaelboban.weatherapp.ui.viewmodels.FavoritesViewModel
 import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
-
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 
 class FavoritesFragment : Fragment() {
@@ -100,6 +105,24 @@ class FavoritesFragment : Fragment() {
             recyclerAdapterFavorites.apply {
                 addWeathers(it)
                 notifyDataSetChanged()
+            }
+        })
+
+        viewModel.status.observe(viewLifecycleOwner, {
+            val snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
+            snackbar.view.setBackgroundColor(Color.TRANSPARENT);
+            val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
+            snackbarLayout.setPadding(0, 0, 0, 0);
+            val snackBinding = SnackbarBinding.inflate(LayoutInflater.from(context))
+            if (!it) {
+                snackBinding.snackbarClose.setOnClickListener {
+                    snackbar.dismiss()
+                }
+                snackBinding.message.text = getString(R.string.network_error)
+                snackBinding.message.backgroundTintList = ColorStateList.valueOf(resources.getColor(
+                    R.color.error))
+                snackbarLayout.addView(snackBinding.root, 0)
+                snackbar.show()
             }
         })
     }

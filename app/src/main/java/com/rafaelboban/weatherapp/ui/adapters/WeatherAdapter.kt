@@ -1,5 +1,6 @@
 package com.rafaelboban.weatherapp.ui.adapters
 
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import kotlin.math.roundToInt
 // Reusing the adapter for both RVs in LocationActivity
 // true for hourly, false for daily
 var CARD_SWITCH = true
+var unit = "metric"
 
 class WeatherAdapter(
     private val weather_list: MutableList<ConsolidatedWeather>,
@@ -31,6 +33,8 @@ class WeatherAdapter(
             parent,
             false
         )
+        val sp = PreferenceManager.getDefaultSharedPreferences(parent.context)
+        unit = sp.getString("unit", "metric")!!
 
         CARD_SWITCH = hours_now.isNotBlank()
         return WeatherViewHolder(binding)
@@ -68,9 +72,13 @@ class WeatherAdapter(
                 null
             )
         )
+        var temp = weather.the_temp
+        if (unit == "imperial") {
+            temp = temp * 1.8 + 32
+        }
         holder.binding.temperatureTv.text = context.resources.getString(
             R.string.temperature_celsius_sign,
-            weather.the_temp.roundToInt().toString(), "°"
+            temp.roundToInt().toString(), "°"
         )
     }
 

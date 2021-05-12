@@ -3,6 +3,7 @@ package com.rafaelboban.weatherapp.ui.adapters
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.icu.util.TimeZone
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ class LocationsAdapter(
     val favoritesFragmentReference: FavoritesFragment? = null
 ) : RecyclerView.Adapter<LocationsAdapter.LocationsViewHolder>() {
     var FAVORITES_EDIT_MODE = false
+    var unit = "metric"
 
     inner class LocationsViewHolder(val binding: CityItemCardBinding) : RecyclerView.ViewHolder(
         binding.root
@@ -46,6 +48,9 @@ class LocationsAdapter(
             false
         )
 
+        val sp = PreferenceManager.getDefaultSharedPreferences(parent.context)
+        unit = sp.getString("unit", "metric")!!
+
         db = DbHelper(DatabaseBuilder.getInstance(parent.context))
 
         return LocationsViewHolder(binding)
@@ -56,12 +61,17 @@ class LocationsAdapter(
         val location = weatherMap.keys.toMutableList()[holder.adapterPosition]
         val weather = weatherMap[location]!!.consolidated_weather[0]
         val context = holder.binding.root.context
-
+        var temp = weather.the_temp
         holder.binding.cityNameTv.text = location.title
+
+        if (unit == "imperial") {
+            temp = temp * 1.8 + 32
+        }
+
         holder.binding.temperatureTv.text = context.
         resources.getString(
             R.string.temperature_celsius_sign,
-            weather.the_temp.roundToInt().toString(), "°"
+            temp.roundToInt().toString(), "°"
         )
         val icon = context.resources.getIdentifier("ic_" + weather.weather_state_abbr,
             "drawable", context.packageName)

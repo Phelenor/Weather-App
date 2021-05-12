@@ -18,25 +18,28 @@ import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
+import android.preference.PreferenceManager
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import com.rafaelboban.weatherapp.R
 import com.rafaelboban.weatherapp.databinding.SnackbarBinding
 import com.rafaelboban.weatherapp.ui.info.InfoActivity
 import com.rafaelboban.weatherapp.ui.location.LocationActivity
+import com.rafaelboban.weatherapp.ui.location.unit
 
 
 class SettingsFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingsBinding
     private lateinit var viewModel: SettingsViewModel
+    var unit = "metric"
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
-
 
         setupViewModel()
         setupListeners()
@@ -46,8 +49,27 @@ class SettingsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val languages = resources.getStringArray(com.rafaelboban.weatherapp.R.array.languages)
-        val arrayAdapter = ArrayAdapter(requireContext(), com.rafaelboban.weatherapp.R.layout.dropdown_item, languages)
+        setupLanguageMenu()
+        setupCityMenu()
+        getPreferences()
+
+        if (unit == "imperial") {
+            binding.radioImperial.isChecked = true
+        } else {
+            binding.radioMetric.isChecked = true
+        }
+    }
+
+    private fun setupCityMenu() {
+    }
+
+    private fun setupLanguageMenu() {
+        val languages = resources.getStringArray(R.array.languages)
+        val arrayAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.dropdown_item,
+            languages
+        )
         binding.languageMenu.setAdapter(arrayAdapter)
         binding.languageMenu.setText(arrayAdapter.getItem(0).toString(), false)
     }
@@ -55,7 +77,10 @@ class SettingsFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService), DbHelper(DatabaseBuilder.getInstance(requireContext())))
+            ViewModelFactory(
+                ApiHelper(RetrofitBuilder.apiService),
+                DbHelper(DatabaseBuilder.getInstance(requireContext()))
+            )
         ).get(SettingsViewModel::class.java)
     }
 
@@ -72,6 +97,27 @@ class SettingsFragment : Fragment() {
             val intent = Intent(context, InfoActivity::class.java)
             context?.startActivity(intent)
         }
+        binding.groupUnits.setOnCheckedChangeListener { group, checkedId ->
+            val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            if (sp.contains("initialized")) {
+                val ed = sp.edit();
+                if (checkedId == R.id.radio_imperial) {
+                    Log.e("xxx", "imp")
+                    ed.putString("unit", "imperial")
+                    unit = "imperial"
+                } else {
+                    ed.putString("unit", "metric")
+                    Log.e("xxx", "met")
+                    unit = "metric"
+                }
+                ed.apply();
+            }
+        }
+    }
+
+    private fun getPreferences() {
+        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        unit = sp.getString("unit", "metric")!!
     }
 
     private fun showDialog(type: String) {

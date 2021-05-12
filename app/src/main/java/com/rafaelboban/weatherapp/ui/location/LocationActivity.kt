@@ -1,9 +1,13 @@
 package com.rafaelboban.weatherapp.ui.location
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.icu.util.TimeZone
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.preference.PreferenceManager
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.rafaelboban.weatherapp.R
 import com.rafaelboban.weatherapp.data.api.ApiHelper
 import com.rafaelboban.weatherapp.data.api.RetrofitBuilder
@@ -23,6 +28,7 @@ import com.rafaelboban.weatherapp.data.model.ConsolidatedWeather
 import com.rafaelboban.weatherapp.data.model.Location
 import com.rafaelboban.weatherapp.data.model.LocationWeather
 import com.rafaelboban.weatherapp.databinding.ActivityLocationBinding
+import com.rafaelboban.weatherapp.databinding.SnackbarBinding
 import com.rafaelboban.weatherapp.ui.adapters.WeatherAdapter
 import com.rafaelboban.weatherapp.ui.viewmodels.LocationViewModel
 import com.rafaelboban.weatherapp.ui.viewmodels.ViewModelFactory
@@ -41,6 +47,7 @@ private lateinit var recyclerAdapterWeek: WeatherAdapter
 
 lateinit var location: Location
 lateinit var weather: LocationWeather
+var unit = "metric"
 var TIME_HOURS: Int = 0
 
 class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -57,6 +64,8 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.backButton.setOnClickListener {
             this.onBackPressed()
         }
+
+        getPreferences()
 
         location = intent.getSerializableExtra(EXTRA_LOCATION) as Location
         weather = intent.getSerializableExtra(EXTRA_WEATHER) as LocationWeather
@@ -136,12 +145,35 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+        private fun getPreferences() {
+            val sp = PreferenceManager.getDefaultSharedPreferences(this)
+            unit = sp.getString("unit", "metric")!!
+        }
+
     private fun setupObservers() {
         viewModel.weather.observe(this, {
             recyclerAdapterToday.apply {
                 addHourly(it)
                 notifyDataSetChanged()
                 recyclerViewToday.layoutManager!!.scrollToPosition(TIME_HOURS)
+            }
+        })
+
+        viewModel.status.observe(this, {
+            val snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
+            snackbar.view.setBackgroundColor(Color.TRANSPARENT);
+            val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
+            snackbarLayout.setPadding(0, 0, 0, 0);
+            val snackBinding = SnackbarBinding.inflate(LayoutInflater.from(this))
+            if (!it) {
+                snackBinding.snackbarClose.setOnClickListener {
+                    snackbar.dismiss()
+                }
+                snackBinding.message.text = getString(R.string.network_error)
+                snackBinding.message.backgroundTintList = ColorStateList.valueOf(resources.getColor(
+                    R.color.error))
+                snackbarLayout.addView(snackBinding.root, 0)
+                snackbar.show()
             }
         })
     }
@@ -180,9 +212,11 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         )
 
         val consolidatedWeather = weather.consolidated_weather[0]
+        var temp = consolidatedWeather.the_temp
+        if (unit == "imperial") temp = temp * 1.8 + 32
         binding.temperatureTv.text = resources.getString(
             R.string.temperature_celsius_sign,
-            consolidatedWeather.the_temp.roundToInt().toString(), "°"
+            temp.roundToInt().toString(), "°"
         )
 
         val icon = resources.getIdentifier(
@@ -209,15 +243,34 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
     @SuppressLint("StringFormatInvalid")
     private fun setInfoGrid() {
         val consWeather = weather.consolidated_weather[0]
+        var tempMax = consWeather.max_temp
+        var tempMin = consWeather.min_temp
+        var windSpeed = consWeather.wind_speed
+        var visibility = consWeather.visibility
+        var airPressure = consWeather.air_pressure
+        var speedUnit = "km/h"
+        var airPressureUnit = "hPa"
+        var distanceUnit = "km"
+
+        if (unit == "imperial") {
+            tempMax = tempMax * 1.8 + 32
+            tempMin = tempMin * 1.8 + 32
+            windSpeed /= 1.609
+            airPressure /= 69
+            visibility /= 1.609
+            speedUnit = "mp/h"
+            airPressureUnit = "psi"
+            distanceUnit = "mi"
+        }
 
         binding.grid.minmaxTemp.text = resources.getString(
             R.string.grid_minmax,
-            consWeather.min_temp.roundToInt().toString(),
-            consWeather.max_temp.roundToInt().toString()
+            tempMin.roundToInt().toString(),
+            tempMax.roundToInt().toString()
         )
         binding.grid.windSpeed.text = resources.getString(
             R.string.grid_wind,
-            consWeather.wind_speed.roundToInt().toString(), consWeather.wind_direction_compass
+            windSpeed.roundToInt().toString(), speedUnit, consWeather.wind_direction_compass
         )
         binding.grid.humidity.text = resources.getString(
             R.string.grid_humidity,
@@ -225,11 +278,11 @@ class LocationActivity : AppCompatActivity(), OnMapReadyCallback {
         )
         binding.grid.pressure.text = resources.getString(
             R.string.grid_pressure,
-            consWeather.air_pressure.roundToInt().toString()
+            airPressure.roundToInt().toString(), airPressureUnit
         )
         binding.grid.visibility.text = resources.getString(
             R.string.grid_visibility,
-            consWeather.visibility.roundToInt().toString()
+            visibility.roundToInt().toString(), distanceUnit
         )
         binding.grid.accuracy.text = resources.getString(
             R.string.grid_accuracy,

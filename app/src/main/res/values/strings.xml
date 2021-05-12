@@ -17,11 +17,11 @@
     <string name="next_5_days">Next 5 Days</string>
     <string name="grid_minmax">%1$s° / %2$s°</string>
     <string name="date">%1$s, %2$s %3$s</string>
-    <string name="grid_wind">%1$s km/h (%2$s)</string>
+    <string name="grid_wind">%1$s %2$s (%3$s)</string>
     <string name="grid_humidity">%1$s\%%</string>
     <string name="grid_accuracy">%1$s\%%</string>
-    <string name="grid_pressure">%1$s hPa</string>
-    <string name="grid_visibility">%1$s km</string>
+    <string name="grid_pressure">%1$s %2$s</string>
+    <string name="grid_visibility">%1$s %2$s</string>
     <string name="time">%1$s:00</string>
     <string name="view_more">VIEW MORE</string>
     <string name="my_cities">My Cities</string>
@@ -53,6 +53,7 @@
     <string name="class_2021">Class 2021</string>
     <string name="sofascore_android_academy">SofaScore Android Academy</string>
     <string name="about">About</string>
+    <string name="network_error">Network Error. Are you connected?</string>
     <string-array name="languages">
         <item>English</item>
         <item>Croatian</item>
