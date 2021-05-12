@@ -35,4 +35,7 @@ interface LocationDao {
 
     @Query("DELETE FROM Favorite")
     suspend fun deleteFavorites()
+
+    @Query("UPDATE Location SET isRecent = 0")
+    suspend fun deleteRecent()
 }

@@ -47,7 +47,7 @@ class WeatherAdapter(
                 hours)
             if (position == hours_now.toInt()) {
                 Log.d("HOURS", "${position} == ${hours_now.toInt()}")
-                holder.binding.weatherInfoCard.setBackgroundColor(context.resources.getColor(R.color.surface_2))
+                holder.binding.weatherInfoCard.setBackgroundTintList(context.resources.getColorStateList(R.color.surface_2))
             } else {
                 // ?????????????????????????????? bez ovoga svaka n-ta prognoza bude siva
                 holder.binding.weatherInfoCard.setBackgroundColor(context.resources.getColor(R.color.white))

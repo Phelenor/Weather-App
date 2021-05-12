@@ -3,11 +3,23 @@ package com.rafaelboban.weatherapp.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.rafaelboban.weatherapp.data.model.Favorite
+import com.rafaelboban.weatherapp.data.repository.MainRepository
+import kotlinx.coroutines.launch
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel(private val repository: MainRepository) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "BZBZ"
+    fun clearFavorites() {
+        viewModelScope.launch {
+            repository.deleteFavorites()
+            repository.resetKey()
+        }
     }
-    val text: LiveData<String> = _text
+
+    fun clearRecent() {
+        viewModelScope.launch {
+            repository.deleteRecent()
+        }
+    }
 }

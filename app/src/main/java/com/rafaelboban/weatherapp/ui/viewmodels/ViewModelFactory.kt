@@ -16,6 +16,8 @@ class ViewModelFactory(private val apiHelper: ApiHelper, private val dbHelper: D
             return LocationViewModel(MainRepository(apiHelper, dbHelper)) as T
         } else if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
             return FavoritesViewModel(MainRepository(apiHelper, dbHelper)) as T
+        } else if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            return SettingsViewModel(MainRepository(apiHelper, dbHelper)) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }
