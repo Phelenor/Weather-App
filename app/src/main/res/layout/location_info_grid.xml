@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/info_grid"
+    android:background="@color/surface_1"
+    android:layout_height="224dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:layout_marginBottom="8dp"
+    android:columnCount="3"
+    android:rowCount="2"
+    app:layout_constraintTop_toBottomOf="parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1">
+
+        <ImageView
+            android:id="@+id/grid_thermostat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/tint_primary"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_thermostat" />
+
+        <TextView
+            android:id="@+id/minmax_tv"
+            style="@style/DescriptionColdGrayCenter"
+            app:layout_constraintEnd_toEndOf="@+id/grid_thermostat"
+            app:layout_constraintStart_toStartOf="@+id/grid_thermostat"
+            app:layout_constraintTop_toBottomOf="@+id/grid_thermostat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="@string/min_max" />
+
+        <TextView
+            android:id="@+id/minmax_temp"
+            style="@style/BodyDarkCenter"
+            app:layout_constraintEnd_toEndOf="@+id/grid_thermostat"
+            app:layout_constraintStart_toStartOf="@+id/grid_thermostat"
+            app:layout_constraintTop_toBottomOf="@+id/minmax_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="23° / 29°" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1">
+
+        <ImageView
+            android:id="@+id/grid_wind"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/tint_primary"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_wind" />
+
+        <TextView
+            android:id="@+id/wind_tv"
+            style="@style/DescriptionColdGrayCenter"
+            app:layout_constraintEnd_toEndOf="@+id/grid_wind"
+            app:layout_constraintStart_toStartOf="@+id/grid_wind"
+            app:layout_constraintTop_toBottomOf="@+id/grid_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="@string/wind" />
+
+        <TextView
+            android:id="@+id/wind_speed"
+            style="@style/BodyDarkCenter"
+            app:layout_constraintEnd_toEndOf="@+id/grid_wind"
+            app:layout_constraintStart_toStartOf="@+id/grid_wind"
+            app:layout_constraintTop_toBottomOf="@+id/wind_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="6 km/h (NW)" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1">
+
+        <ImageView
+            android:id="@+id/grid_humidity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/tint_primary"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_humidity" />
+
+        <TextView
+            android:id="@+id/humidity_tv"
+            style="@style/DescriptionColdGrayCenter"
+            app:layout_constraintEnd_toEndOf="@+id/grid_humidity"
+            app:layout_constraintStart_toStartOf="@+id/grid_humidity"
+            app:layout_constraintTop_toBottomOf="@+id/grid_humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="@string/humidity" />
+
+        <TextView
+            android:id="@+id/humidity"
+            style="@style/BodyDarkCenter"
+            app:layout_constraintEnd_toEndOf="@+id/grid_humidity"
+            app:layout_constraintStart_toStartOf="@+id/grid_humidity"
+            app:layout_constraintTop_toBottomOf="@+id/humidity_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="37%" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1">
+
+        <ImageView
+            android:id="@+id/pressure_grid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/tint_primary"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_pressure" />
+
+        <TextView
+            android:id="@+id/pressure_tv"
+            style="@style/DescriptionColdGrayCenter"
+            app:layout_constraintEnd_toEndOf="@+id/pressure_grid"
+            app:layout_constraintStart_toStartOf="@+id/pressure_grid"
+            app:layout_constraintTop_toBottomOf="@+id/pressure_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="@string/pressure" />
+
+        <TextView
+            android:id="@+id/pressure"
+            style="@style/BodyDarkCenter"
+            app:layout_constraintEnd_toEndOf="@+id/pressure_grid"
+            app:layout_constraintStart_toStartOf="@+id/pressure_grid"
+            app:layout_constraintTop_toBottomOf="@+id/pressure_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="1006 hPa" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1">
+
+        <ImageView
+            android:id="@+id/visibility_grid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/tint_primary"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_visibility" />
+
+        <TextView
+            android:id="@+id/visibility_tv"
+            style="@style/DescriptionColdGrayCenter"
+            app:layout_constraintEnd_toEndOf="@+id/visibility_grid"
+            app:layout_constraintStart_toStartOf="@+id/visibility_grid"
+            app:layout_constraintTop_toBottomOf="@+id/visibility_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="@string/visibility" />
+
+        <TextView
+            android:id="@+id/visibility"
+            style="@style/BodyDarkCenter"
+            app:layout_constraintEnd_toEndOf="@+id/visibility_grid"
+            app:layout_constraintStart_toStartOf="@+id/visibility_grid"
+            app:layout_constraintTop_toBottomOf="@+id/visibility_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="16 km" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1">
+
+        <ImageView
+            android:id="@+id/accuracy_grid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/tint_primary"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_accuracy" />
+
+        <TextView
+            android:id="@+id/accuracy_tv"
+            style="@style/DescriptionColdGrayCenter"
+            app:layout_constraintEnd_toEndOf="@+id/accuracy_grid"
+            app:layout_constraintStart_toStartOf="@+id/accuracy_grid"
+            app:layout_constraintTop_toBottomOf="@+id/accuracy_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="@string/accuracy" />
+
+        <TextView
+            android:id="@+id/accuracy"
+            style="@style/BodyDarkCenter"
+            app:layout_constraintEnd_toEndOf="@+id/accuracy_grid"
+            app:layout_constraintStart_toStartOf="@+id/accuracy_grid"
+            app:layout_constraintTop_toBottomOf="@+id/accuracy_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="8dp"
+            android:text="93%" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</GridLayout>
